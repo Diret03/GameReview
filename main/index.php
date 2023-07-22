@@ -1,18 +1,18 @@
+<?php
+// Código PHP para obtener los detalles de los videojuegos desde la base de datos
+include '../php/db.php';
+$sql = "SELECT * FROM games";
+$result = mysqli_query($con, $sql);
+?>
+
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reseñas de Videojuegos</title>
-    <!-- Importa el archivo bootstrap.min.css o usa el enlace a Bootstrap desde un CDN -->
-    <link rel="stylesheet" href="../css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
-</head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>Inicio</title>
 </head>
 
 <body>
@@ -27,70 +27,87 @@
                     <a class="nav-link" href="#">Inicio<span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Reseñas</a>
+                    <a class="nav-link" href="../main/games.php">Videojuegos</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Cuenta</a>
                 </li>
             </ul>
         </div>
+        <style>
+            /* Estilo para que todas las imágenes tengan el mismo tamaño */
+            .card-img-top {
+                height: 420px;
+                object-fit: cover;
+            }
+        </style>
     </nav>
-    <div class="container mt-4">
-        <h1 class="mb-4">Videojuegos</h1>
-        <button class="btn btn-primary">
-            <a href="../main/addGame.php" class="text-light">Agregar videojuego</a>
-        </button>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Descripción</th>
-                    <th>Fecha de Lanzamiento</th>
-                    <th>Género</th>
-                    <th>Desarrolladora</th>
-                    <!-- <th>Imagen</th> -->
-                </tr>
-            </thead>
-            <tbody id="tabla-videojuegos">
-                <?php
-                include '../php/display.php';
-                ?>
-            </tbody>
-        </table>
-    </div>
-    <script>
-        $(document).ready(function() {
-            // Agregar el evento de clic para el botón de descripción
-            $('.btn-descripcion').click(function() {
-                var icon = $(this).find('i'); // Obtener el ícono del botón
-
-                // Verificar si la descripción está oculta o visible
-                if ($(this).attr('aria-expanded') === 'true') {
-                    // Si la descripción está visible, cambiar el ícono a 'fa-plus'
-                    icon.removeClass('fa-minus').addClass('fa-plus');
-                } else {
-                    // Si la descripción está oculta, cambiar el ícono a 'fa-minus'
-                    icon.removeClass('fa-plus').addClass('fa-minus');
+    <section style="background-color: #eee;">
+        <div class="container py-5">
+            <?php
+            $count = 0;
+            while ($row = mysqli_fetch_assoc($result)) {
+                if ($count % 3 === 0) {
+                    echo '<div class="row">';
                 }
-            });
 
-            // Agregar un evento para cuando se complete la animación de colapso/expandir
-            $('.collapse').on('shown.bs.collapse hidden.bs.collapse', function() {
-                var icon = $(this).prev('.btn-descripcion').find('i'); // Obtener el ícono del botón
+                // Aquí obtén los valores específicos del videojuego desde la fila actual en $row
+                $gameID = $row['gameID'];
+                $name = $row['name'];
+                $genre = $row['genre'];
+                $releaseDate = $row['releaseDate'];
+                $developer = $row['developer'];
+                $calificacion = '5/5'; // Esto debe reemplazarse por la calificación real del videojuego
 
-                // Verificar si la descripción está oculta o visible
-                if ($(this).hasClass('show')) {
-                    // Si la descripción está visible, cambiar el ícono a 'fa-minus'
-                    icon.removeClass('fa-plus').addClass('fa-minus');
-                } else {
-                    // Si la descripción está oculta, cambiar el ícono a 'fa-plus'
-                    icon.removeClass('fa-minus').addClass('fa-plus');
+                // Convertir el BLOB de la imagen en una URL válida (esquema data URI)
+                $imageData = $row['image'];
+                $base64Image = base64_encode($imageData);
+                $imageURL = 'data:image/jpeg;base64,' . $base64Image;
+
+                echo '
+                <div class="col-md-12 col-lg-4 mb-4 mb-lg-0">
+                    <div class="card">
+                        <div class="d-flex justify-content-between p-3">
+                            <h5 class="mb-0">' . $name . '</h5>
+                        </div>
+                        <img src="' . $imageURL . '" class="card-img-top" />
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <p class="small"><a href="#!" class="text-muted">' . $genre . '</a></p>
+                                <p class="small text-danger">' . $releaseDate . '</p>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3">
+                                <h5 class="mb-0">' . $developer . '</h5>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <p class="text-muted mb-0">Calificación: ' . $calificacion . '</p>
+                                <button type="button" class="btn btn-primary">
+                                <a class="fas fa-sync-alt text-light" href="../main/reviewGame.php?reviewid=' . $gameID . '">Reseñar</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                ';
+
+                $count++;
+
+                if ($count % 3 === 0) {
+                    echo '</div>';
                 }
-            });
-        });
-    </script>
+            }
 
+            // Si el número total de videojuegos no es múltiplo de 3, cierra la última fila con </div>
+            if ($count % 3 !== 0) {
+                echo '</div>';
+            }
+            ?>
+        </div>
+    </section>
+    <footer class="bg-light text-center text-lg-start">
+        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+            <!-- Footer -->
+        </div>
+    </footer>
 </body>
 
 </html>

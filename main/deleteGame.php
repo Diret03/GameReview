@@ -12,7 +12,7 @@ if (isset($_GET['deleteid'])) {
 
 
     if ($result) {
-        header('location: index.php');
+        header('location: games.php');
         die();
     } else {
         die(mysqli_error($con));
