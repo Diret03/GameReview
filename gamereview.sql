@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 23, 2023 at 01:21 AM
+-- Generation Time: Jul 23, 2023 at 02:51 AM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.2.0
 
@@ -68,6 +68,13 @@ CREATE TABLE `review` (
   `comment` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `review`
+--
+
+INSERT INTO `review` (`reviewID`, `userID`, `gameID`, `rating`, `comment`) VALUES
+(2, 17, 23, 5, 'ta bien');
+
 -- --------------------------------------------------------
 
 --
@@ -78,19 +85,17 @@ CREATE TABLE `users` (
   `userID` int(100) NOT NULL,
   `username` varchar(40) NOT NULL,
   `email` varchar(100) NOT NULL,
-  `password` varchar(50) NOT NULL,
-  `type` varchar(1) NOT NULL
+  `password` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`userID`, `username`, `email`, `password`, `type`) VALUES
-(1, 'root', 'diegodavidrecalde@gmail.com', '$2y$10$CcCKLooatRc9s6SWGDmcCe/zqbP2INYFbGHeZlvPc5C', ''),
-(2, 'root', 'jordan@gmail.com', '$2y$10$4M7T8Gj.zQdH65LTuXm89OYlXiTkgWzWj3f7WOPUmj3', ''),
-(3, 'root', 'diegodavidrecalde@hotmail.com', '', ''),
-(4, 'root', 'juan@gmail.com', '$2y$10$XqVtH7A8.3RYjUDeXveFWOucWyF6afSFbz9EQqv245p', '');
+INSERT INTO `users` (`userID`, `username`, `email`, `password`) VALUES
+(15, 'jordan123', 'jordan123@gmail.com', 'jordan123'),
+(16, 'diegoR', 'diegodavidrecalde@gmail.com', 'diego123'),
+(17, 'aux123', 'aux123@gmail.com', 'aux123');
 
 --
 -- Indexes for dumped tables
@@ -115,7 +120,8 @@ ALTER TABLE `review`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`userID`),
-  ADD UNIQUE KEY `email` (`email`);
+  ADD UNIQUE KEY `email` (`email`),
+  ADD UNIQUE KEY `username` (`username`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -131,13 +137,13 @@ ALTER TABLE `games`
 -- AUTO_INCREMENT for table `review`
 --
 ALTER TABLE `review`
-  MODIFY `reviewID` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `reviewID` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `userID` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `userID` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- Constraints for dumped tables
