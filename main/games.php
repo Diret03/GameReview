@@ -29,9 +29,8 @@
                 <li class="nav-item active">
                     <a class="nav-link" href="#">Reseñas<span class="sr-only">(current)</span></a>
                 </li>
-
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Cuenta</a>
+                    <a class="nav-link" href="../main/account.php">Cuenta</a>
                 </li>
             </ul>
         </div>

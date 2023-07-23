@@ -30,7 +30,7 @@ $result = mysqli_query($con, $sql);
                     <a class="nav-link" href="../main/games.php">Videojuegos</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Cuenta</a>
+                    <a class="nav-link" href="../main/account.php">Cuenta</a>
                 </li>
             </ul>
         </div>

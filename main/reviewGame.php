@@ -2,18 +2,26 @@
 
 include '../php/db.php';
 
+// Verificar si el usuario ha iniciado sesión
+session_start();
+if (!isset($_SESSION['userID'])) {
+    // Si el usuario no ha iniciado sesión, redirigirlo a la página de inicio de sesión
+    header('location: login.php');
+    die();
+}
+
 if (isset($_GET['reviewid'])) {
     $gameID = $_GET['reviewid'];
 
     // Verificar si se ha enviado el formulario de reseña
     if (isset($_POST['submit'])) {
         // Recopilar los datos del formulario
-        $author = $_POST['author'];
+        $userID = $_SESSION['userID']; // Obtener el userID del usuario que ha iniciado sesión
         $content = mysqli_real_escape_string($con, $_POST['content']); // Se manejan caracteres especiales
         $rating = $_POST['rating'];
 
         // Insertar la reseña en la base de datos
-        $sql = "INSERT INTO review (gameID, userID, comment, rating) VALUES ('$gameID', '$author', '$content', '$rating')";
+        $sql = "INSERT INTO review (gameID, userID, comment, rating) VALUES ('$gameID', '$userID', '$content', '$rating')";
         $result = mysqli_query($con, $sql);
 
         if ($result) {

@@ -8,21 +8,21 @@ if (isset($_SESSION['userID'])) {
 }
 
 if (isset($_POST['submit'])) {
-    $email = $_POST['email'];
+    $username = $_POST['username'];
     $password = $_POST['password'];
 
     // Conectar a la base de datos
     include '../php/db.php';
 
-    // Verificar si el correo electrónico está registrado
-    $sql = "SELECT * FROM users WHERE email='$email'";
+    // Verificar si el nombre de usuario está registrado
+    $sql = "SELECT * FROM users WHERE username='$username'";
     $result = mysqli_query($con, $sql);
 
     if (mysqli_num_rows($result) > 0) {
         $user = mysqli_fetch_assoc($result);
 
         // Verificar la contraseña
-        if (password_verify($password, $user['password'])) {
+        if ($password === $user['password']) {
             // Iniciar sesión exitosamente
             $_SESSION['userID'] = $user['userID'];
             header('location: index.php');
@@ -31,7 +31,7 @@ if (isset($_POST['submit'])) {
             $error_message = "Contraseña incorrecta. Por favor, intenta nuevamente.";
         }
     } else {
-        $error_message = "El correo electrónico no está registrado. Por favor, crea una cuenta.";
+        $error_message = "El nombre de usuario no está registrado. Por favor, crea una cuenta.";
     }
 }
 ?>
@@ -58,14 +58,18 @@ if (isset($_POST['submit'])) {
                                 <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
 
                                     <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Iniciar Sesión</p>
-
+                                    <?php if (isset($error_message)) : ?>
+                                        <div class="alert alert-danger" role="alert">
+                                            <?php echo $error_message; ?>
+                                        </div>
+                                    <?php endif; ?>
                                     <form class="mx-1 mx-md-4" method="POST">
 
                                         <div class="d-flex flex-row align-items-center mb-4">
                                             <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
                                             <div class="form-outline flex-fill mb-0">
-                                                <label for="email">Correo Electrónico:</label>
-                                                <input type="email" class="form-control" id="email" name="email" required>
+                                                <label for="username">Nombre de Usuario:</label>
+                                                <input type="text" class="form-control" id="username" name="username" required>
                                             </div>
                                         </div>
 

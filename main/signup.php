@@ -19,8 +19,7 @@ if (isset($_POST['submit'])) {
             $error_message = "El correo electrónico ya está registrado. Por favor, utiliza otro correo.";
         } else {
             // Insertar el nuevo usuario en la base de datos
-            $hashed_password = password_hash($password, PASSWORD_DEFAULT); // Hash de la contraseña
-            $sql = "INSERT INTO users (username, email, password) VALUES ('$username', '$email', '$hashed_password')";
+            $sql = "INSERT INTO users (username, email, password) VALUES ('$username', '$email', '$password')";
             $result = mysqli_query($con, $sql);
 
             if ($result) {
@@ -56,7 +55,11 @@ if (isset($_POST['submit'])) {
                                 <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
 
                                     <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Registrarse</p>
-
+                                    <?php if (isset($error_message)) : ?>
+                                        <div class="alert alert-danger" role="alert">
+                                            <?php echo $error_message; ?>
+                                        </div>
+                                    <?php endif; ?>
                                     <form class="mx-1 mx-md-4" method="POST">
 
                                         <div class="d-flex flex-row align-items-center mb-4">
