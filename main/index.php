@@ -102,7 +102,8 @@ $result = mysqli_query($con, $sql);
                                 <h5 class="mb-0">' . $developer . '</h5>
                             </div>
                             <div class="d-flex justify-content-between mb-2">
-                                <p class="text-muted mb-0">Calificación: ' . $calificacion . '</p>
+                                <!-- <p class="text-muted mb-0">Calificación: ' . $calificacion . '</p> -->
+                                <a class="text-muted mb-0" href="../main/reviews.php?gameID=' . $gameID . '">Calificación: '. $calificacion . '</a>
                                 <button type="button" class="btn btn-primary">
                                 <a class="fas fa-sync-alt text-light" href="../main/reviewGame.php?reviewid=' . $gameID . '">Reseñar</a>
                             </div>
