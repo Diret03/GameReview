@@ -24,6 +24,19 @@ $end = min($start + $gamesPerPage - 1, $totalGames - 1);
 // Consulta para obtener los juegos de la página actual
 $sql = "SELECT * FROM games LIMIT $start, $gamesPerPage";
 $result = mysqli_query($con, $sql);
+
+function getAverage($gameID)
+{
+    global $con;
+    $sql = "SELECT AVG(rating) AS average FROM review WHERE gameID=$gameID";
+    $result = mysqli_query($con, $sql);
+    $row = mysqli_fetch_assoc($result);
+
+    // Obtener el promedio de calificación, redondeado a un decimal
+    $promedio = round($row['average'], 1);
+
+    return $promedio;
+}
 ?>
 
 <!DOCTYPE html>
@@ -39,7 +52,7 @@ $result = mysqli_query($con, $sql);
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Videojuegos</a>
+        <a class="navbar-brand" href="#">Virtual Verdicts</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -50,6 +63,9 @@ $result = mysqli_query($con, $sql);
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="../main/games.php">Videojuegos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../main/crudReview.php">Reseñas</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="../main/account.php">Cuenta</a>
@@ -79,7 +95,11 @@ $result = mysqli_query($con, $sql);
                 $genre = $row['genre'];
                 $releaseDate = $row['releaseDate'];
                 $developer = $row['developer'];
-                $calificacion = '5/5'; // Esto debe reemplazarse por la calificación real del videojuego
+
+                if (getAverage($gameID) == 0) {
+                    $calificacion = '-/5';
+                } else
+                    $calificacion = getAverage($gameID) . '/5'; // Esto debe reemplazarse por la calificación real del videojuego
 
                 // Convertir el BLOB de la imagen en una URL válida (esquema data URI)
                 $imageData = $row['image'];
@@ -102,7 +122,7 @@ $result = mysqli_query($con, $sql);
                                 <h5 class="mb-0">' . $developer . '</h5>
                             </div>
                             <div class="d-flex justify-content-between mb-2">
-                                <p class="text-muted mb-0">Calificación: ' . $calificacion . '</p>
+                                <a class="text-muted mb-0" href="../main/reviews.php?displayreviewid=' . $gameID . '">Calificación: ' . $calificacion . '</a>
                                 <button type="button" class="btn btn-primary">
                                 <a class="fas fa-sync-alt text-light" href="../main/reviewGame.php?reviewid=' . $gameID . '">Reseñar</a>
                             </div>

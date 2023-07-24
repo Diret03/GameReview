@@ -1,3 +1,29 @@
+<?php
+include '../php/db.php';
+
+// Función para obtener el nombre del usuario a partir de su userID
+function getUsername($userID)
+{
+    global $con;
+    $sql = "SELECT username FROM users WHERE userID=$userID";
+    $result = mysqli_query($con, $sql);
+    $row = mysqli_fetch_assoc($result);
+    return $row['username'];
+}
+
+function getGameName($gameID)
+{
+    global $con;
+    $sql = "SELECT name FROM games WHERE gameID=$gameID";
+    $result = mysqli_query($con, $sql);
+    $row = mysqli_fetch_assoc($result);
+    return $row['name'];
+}
+
+$sql = "SELECT * FROM review";
+$result = mysqli_query($con, $sql);
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -5,7 +31,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reseñas de Videojuegos</title>
-    <!-- Importa el archivo bootstrap.min.css o usa el enlace a Bootstrap desde un CDN -->
     <link rel="stylesheet" href="../css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -14,7 +39,6 @@
     <link rel="stylesheet" href="../css/app.css">
 
 </head>
-
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -27,11 +51,11 @@
                 <li class="nav-item">
                     <a class="nav-link" href="../main/index.php">Inicio</a>
                 </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="#">Videojuegos<span class="sr-only">(current)</span></a>
-                </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="../main/crudReview.php">Reseñas</a>
+                    <a class="nav-link" href="../main/games.php">Videojuegos</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="../main/crudReview.php">Reseñas<span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="../main/account.php">Cuenta</a>
@@ -40,62 +64,52 @@
         </div>
     </nav>
     <div class="container mt-4">
-        <h1 class="mb-4">Videojuegos</h1>
+        <h1 class="mb-4">Reseñas de Videojuegos</h1>
         <button class="btn btn-primary">
-            <a href="../main/addGame.php" class="text-light">Agregar videojuego</a>
+            <a href="../main/addReview.php" class="text-light">Agregar reseña</a>
         </button>
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Descripción</th>
-                    <th>Fecha de Lanzamiento</th>
-                    <th>Género</th>
-                    <th>Desarrolladora</th>
+                    <th>Usuario(ID)</th>
+                    <th>Título del Videojuego(ID)</th>
+                    <th>Calificación</th>
+                    <th>Comentario</th>
                 </tr>
             </thead>
-            <tbody id="tabla-videojuegos">
+            <tbody id="tabla-resenas">
                 <?php
-                include '../php/db.php';
-                $sql = "SELECT * FROM games";
-                $result = mysqli_query($con, $sql);
-
                 if ($result) {
-
                     while ($row = mysqli_fetch_assoc($result)) {
-
+                        $reviewID = $row['reviewID'];
+                        $userID = $row['userID'];
                         $gameID = $row['gameID'];
-                        $name = $row['name'];
-                        $description = $row['description'];
-                        $releaseDate = $row['releaseDate'];
-                        $genre = $row['genre'];
-                        $developer = $row['developer'];
+                        $rating = $row['rating'];
+                        $comment = $row['comment'];
 
                         $tablaHTML = '';
                         $tablaHTML .= '<tr>';
-                        $tablaHTML .= '<td>' . $gameID . '</td>';
-                        $tablaHTML .= '<td>' . $name . '</td>';
-                        // $tablaHTML .= '<td>' . $description . '</td>';
+                        $tablaHTML .= '<td>' . $reviewID . '</td>';
+                        $tablaHTML .= '<td>' . getUsername($userID) . '(' . $userID . ')' . '</td>';
+                        $tablaHTML .= '<td>' . getGameName($gameID) . '(' . $gameID . ')' . '</td>';
+                        $tablaHTML .= '<td>' . $rating . '/5</td>';
                         $tablaHTML .= '<td>';
-                        $tablaHTML .= '<button class="btn btn-primary btn-descripcion" data-toggle="collapse" data-target="#descripcion-' . $gameID . '">
-                        <i class="fas fa-plus"></i>
-                        </button>';
-                        $tablaHTML .= '<div id="descripcion-' . $gameID . '" class="collapse">' . $description . '</div>';
+                        $tablaHTML .= '<button class="btn btn-primary btn-comment" data-toggle="collapse" data-target="#comentario-' . $reviewID . '">
+                            <i class="fas fa-plus"></i>
+                            </button>';
+                        $tablaHTML .= '<div id="comentario-' . $reviewID . '" class="collapse">' . $comment . '</div>';
                         $tablaHTML .= '</td>';
-                        $tablaHTML .= '<td>' . $releaseDate . '</td>';
-                        $tablaHTML .= '<td>' . $genre . '</td>';
-                        $tablaHTML .= '<td>' . $developer . '</td>';
                         $tablaHTML .= '<td>' .
                             '       
                             <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
                             <div class="btn-group mr-2" role="group" aria-label="Actualizar y Eliminar">
                 
                                 <button type="button" class="btn btn-primary">
-                                <a class="fas fa-sync-alt text-light" href="../main/updateGame.php?updateid=' . $gameID . '"></a>
+                                <a class="fas fa-sync-alt text-light" href="../main/updateReview.php?updateid=' . $reviewID . '"></a>
                             </button>
                                 <button type="button" class="btn btn-danger">
-                                <a class="fas fa-trash-alt text-light" href="../main/deleteGame.php?deleteid=' . $gameID . '"></a>
+                                <a class="fas fa-trash-alt text-light" href="../main/deleteReview.php?deleteid=' . $reviewID . '"></a>
                             </button>
                             </div>
                         </div>'

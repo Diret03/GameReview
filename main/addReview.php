@@ -1,5 +1,7 @@
 <?php
 
+//ignorar!
+
 include '../php/db.php';
 
 if (isset($_POST['submit'])) {
@@ -67,7 +69,7 @@ if (isset($_POST['submit'])) {
                     rgba(58, 58, 158, 0.8),
                     rgba(136, 136, 206, 0.7)),
                 /*fondo de pantalla*/
-                url(https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/a3bf6b4c-9a4e-4d58-a3a7-ae498c536802/da30brv-48dbf45d-fe55-4d41-ad5f-721958e2003a.jpg/v1/fill/w_1166,h_685,q_70,strp/playstation_buttons_by_mojojojolabs_da30brv-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NzUyIiwicGF0aCI6IlwvZlwvYTNiZjZiNGMtOWE0ZS00ZDU4LWEzYTctYWU0OThjNTM2ODAyXC9kYTMwYnJ2LTQ4ZGJmNDVkLWZlNTUtNGQ0MS1hZDVmLTcyMTk1OGUyMDAzYS5qcGciLCJ3aWR0aCI6Ijw9MTI4MCJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS5vcGVyYXRpb25zIl19._gsLhp9CwrfYAkN86HCH9aUY8qyX0ugjRP2w4WuvzUs);
+                url(https://wallpapercave.com/wp/wp4364718.jpg);
         }
     </style>
 </head>
@@ -83,9 +85,19 @@ if (isset($_POST['submit'])) {
                 <input type="text" class="form-control" id="name" name="name" required>
             </div>
             <div class="form-group">
+                <p>Videojuego:</p>
+                <select id="dropdown" name="role" class="form-control" required="">
+                    <option disabled="disabled" selected="selected" value="">Seleccionar videojuego a reseñar</option>
+                    <option value="student">Dark Souls 1</option> <!-- juego 1 -->
+                    <option value="job">Zelda</option><!-- juego 2 -->
+                    <option value="learner">Red Dead Redemption 2</option> <!-- juego 3 -->
+                </select>
+            </div>
+            <div class="form-group">
                 <label for="description">Descripción:</label>
                 <textarea class="form-control input-textarea" id="description" name="description" required></textarea>
             </div>
+
             <div class="form-group">
                 <label for="releaseDate">Fecha de Lanzamiento:</label>
                 <input type="date" class="form-control" id="releaseDate" name="releaseDate" required>
@@ -112,6 +124,7 @@ if (isset($_POST['submit'])) {
             <a href="../main/games.php">Regresar</a>
         </button>
     </div>
+
 </body>
 
 </html>
