@@ -21,8 +21,12 @@ $currentPage = isset($_GET['page']) ? max(1, $_GET['page']) : 1;
 $start = ($currentPage - 1) * $gamesPerPage;
 $end = min($start + $gamesPerPage - 1, $totalGames - 1);
 
-// Consulta para obtener los juegos de la página actual
-$sql = "SELECT * FROM games LIMIT $start, $gamesPerPage";
+// Consulta para obtener los juegos de la página actual y el promedio de calificaciones
+$sql = "SELECT g.*, IFNULL(AVG(r.rating), 0) AS promedio_calificaciones
+        FROM games g
+        LEFT JOIN review r ON g.gameID = r.gameID
+        GROUP BY g.gameID
+        LIMIT $start, $gamesPerPage";
 $result = mysqli_query($con, $sql);
 ?>
 
@@ -32,7 +36,8 @@ $result = mysqli_query($con, $sql);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="../css/app.css">
     <title>Inicio</title>
 </head>
@@ -40,7 +45,8 @@ $result = mysqli_query($con, $sql);
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">Videojuegos</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
@@ -79,8 +85,8 @@ $result = mysqli_query($con, $sql);
                 $genre = $row['genre'];
                 $releaseDate = $row['releaseDate'];
                 $developer = $row['developer'];
-                $calificacion = '5/5'; // Esto debe reemplazarse por la calificación real del videojuego
-
+                $promedioCalificaciones = number_format($row['promedio_calificaciones'], 1); // Formatear el promedio con un decimal
+            
                 // Convertir el BLOB de la imagen en una URL válida (esquema data URI)
                 $imageData = $row['image'];
                 $base64Image = base64_encode($imageData);
@@ -102,8 +108,7 @@ $result = mysqli_query($con, $sql);
                                 <h5 class="mb-0">' . $developer . '</h5>
                             </div>
                             <div class="d-flex justify-content-between mb-2">
-                                <!-- <p class="text-muted mb-0">Calificación: ' . $calificacion . '</p> -->
-                                <a class="text-muted mb-0" href="../main/reviews.php?gameID=' . $gameID . '">Calificación: '. $calificacion . '</a>
+                                <a class="text-muted mb-0" href="../main/reviews.php?gameID=' . $gameID . '">Calificación: ' . $promedioCalificaciones . '/5</a>
                                 <button type="button" class="btn btn-primary">
                                 <a class="fas fa-sync-alt text-light" href="../main/reviewGame.php?reviewid=' . $gameID . '">Reseñar</a>
                             </div>
