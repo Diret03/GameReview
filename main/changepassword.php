@@ -64,32 +64,35 @@ if (isset($_POST['change']) && !empty($_POST['nueva_contrasena']) && !empty($_PO
             width: 200px;
             background: linear-gradient(to right, #030126, #06dea4);
         }
-        h1, label{
+
+        h1,
+        label {
             color: white;
         }
-        form{
-            background-color:blue: #007bff;
-            backdrop-filter: blur(10px); 
+
+        form {
+            background-color: #007bff;
+            backdrop-filter: blur(10px);
         }
     </style>
 </head>
 
 <body>
-        <form action="" method="POST">
+    <form action="" method="POST">
         <div class="btn-container">
-        <h1 class="text-center mb-5">Cambio de contraseña, <?php echo $user['username']; ?>!</h1>
-        <form method="POST">
-            <section>
-                <label for="nueva_contrasena">Nueva contraseña:</label>
-                <input class="form-control" type="password" id="nueva_contrasena" name="nueva_contrasena" required>
-                <label for="confirmar_contrasena">Confirmar nueva contraseña:</label>
-                <input class="form-control" type="password" id="confirmar_contrasena" name="confirmar_contrasena" required>
-            </section>
-            <button type="submit" name="change" class="btn btn-primary">Cambiar Contraseña</button>
-        </form>
-    </div>
-        </form>
-    
+            <h1 class="text-center mb-5">Cambio de contraseña, <?php echo $user['username']; ?>!</h1>
+            <form method="POST">
+                <section>
+                    <label for="nueva_contrasena">Nueva contraseña:</label>
+                    <input class="form-control" type="password" id="nueva_contrasena" name="nueva_contrasena" required>
+                    <label for="confirmar_contrasena">Confirmar nueva contraseña:</label>
+                    <input class="form-control" type="password" id="confirmar_contrasena" name="confirmar_contrasena" required>
+                </section>
+                <button type="submit" name="change" class="btn btn-primary">Cambiar Contraseña</button>
+            </form>
+        </div>
+    </form>
+
 </body>
 
 </html>

@@ -1,7 +1,28 @@
 <?php
 // Código PHP para obtener los detalles de los videojuegos desde la base de datos
 include '../php/db.php';
-$sql = "SELECT * FROM games";
+
+// Cantidad de juegos a mostrar por página
+$gamesPerPage = 6;
+
+// Obtener el número total de juegos
+$sqlTotal = "SELECT COUNT(*) AS total FROM games";
+$resultTotal = mysqli_query($con, $sqlTotal);
+$rowTotal = mysqli_fetch_assoc($resultTotal);
+$totalGames = $rowTotal['total'];
+
+// Calcular el número total de páginas
+$totalPages = ceil($totalGames / $gamesPerPage);
+
+// Obtener la página actual (si no está definida, será 1 por defecto)
+$currentPage = isset($_GET['page']) ? max(1, $_GET['page']) : 1;
+
+// Calcular el índice de inicio y fin de los juegos a mostrar en la página actual
+$start = ($currentPage - 1) * $gamesPerPage;
+$end = min($start + $gamesPerPage - 1, $totalGames - 1);
+
+// Consulta para obtener los juegos de la página actual
+$sql = "SELECT * FROM games LIMIT $start, $gamesPerPage";
 $result = mysqli_query($con, $sql);
 ?>
 
@@ -69,7 +90,7 @@ $result = mysqli_query($con, $sql);
                 <div class="col-md-12 col-lg-4 mb-4 mb-lg-0">
                     <div class="card">
                         <div class="d-flex justify-content-between p-3">
-                            <h5 class="mb-0">' . $name . '</h5>
+                            <h4 class="mb-0">' . $name . '</h4>
                         </div>
                         <img src="' . $imageURL . '" class="card-img-top" />
                         <div class="card-body">
@@ -104,6 +125,26 @@ $result = mysqli_query($con, $sql);
             ?>
         </div>
     </section>
+
+    <nav class="mt-4" aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <?php
+            // Mostrar botones de flechas para navegar entre las páginas de videojuegos
+            if ($currentPage > 1) {
+                echo '<li class="page-item"><a class="page-link" href="?page=' . ($currentPage - 1) . '">Anterior</a></li>';
+            }
+
+            for ($i = 1; $i <= $totalPages; $i++) {
+                $activeClass = ($i === $currentPage) ? 'active' : '';
+                echo '<li class="page-item ' . $activeClass . '"><a class="page-link" href="?page=' . $i . '">' . $i . '</a></li>';
+            }
+
+            if ($currentPage < $totalPages) {
+                echo '<li class="page-item"><a class="page-link" href="?page=' . ($currentPage + 1) . '">Siguiente</a></li>';
+            }
+            ?>
+        </ul>
+    </nav>
     <footer class="bg-light text-center text-lg-start">
         <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
             <!-- Footer -->
