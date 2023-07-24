@@ -12,5 +12,6 @@ $con = mysqli_connect($hostnameDB, $usernameDB, $passwordDB, $databaseDB);
 
 // Check the connection
 if (!$con) {
-    die('Connection failed: ');
+    die('Connection failed: ' . mysqli_connect_error());
 }
+?>
