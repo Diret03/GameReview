@@ -58,20 +58,33 @@ if (isset($_POST['submit'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Añadir videojuego</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/app.css">
+    <link rel="stylesheet" href="../css/form.css">
+
+    <style>
+        body::before {
+            background-image: linear-gradient(115deg,
+                    rgba(58, 58, 158, 0.8),
+                    rgba(136, 136, 206, 0.7)),
+                /*fondo de pantalla*/
+                url(https://wallpapercave.com/wp/wp4364718.jpg);
+        }
+    </style>
 </head>
 
 <body>
-    <div class="container mt-4 my-5">
-        <h1>Añadir videojuego</h1>
-        <form method="POST" enctype="multipart/form-data">
+    <div class="container">
+        <header class="header">
+            <h1 id="title" class="text-center">Añadir videojuego</h1>
+        </header>
+        <form method="POST" enctype="multipart/form-data" id="survey-form">
             <div class="form-group">
-                <label for="name">Nombre:</label>
+                <label for="name" id="name-label">Nombre:</label>
                 <input type="text" class="form-control" id="name" name="name" required>
             </div>
             <div class="form-group">
                 <label for="description">Descripción:</label>
-                <textarea class="form-control" id="description" name="description" rows="5" required></textarea>
+                <textarea class="form-control input-textarea" id="description" name="description" required></textarea>
             </div>
             <div class="form-group">
                 <label for="releaseDate">Fecha de Lanzamiento:</label>
@@ -89,10 +102,15 @@ if (isset($_POST['submit'])) {
                 <label for="image">Imagen:</label>
                 <input type="file" class="form-control-file" id="image" name="image" accept="image/*" required>
             </div>
-            <button type="submit" name="submit" class="btn btn-primary">Agregar</button>
-
+            <div class="form-group">
+                <button type="submit" id="submit" name="submit" class="submit-button">
+                    Agregar
+                </button>
+            </div>
         </form>
-        <button type="submit" name="submit" class="btn btn-primary" style="margin-top: 2px;"><a class="text-light" href="../main/games.php">Regresar</a></button>
+        <button type="submit" class="submit-button">
+            <a href="../main/games.php">Regresar</a>
+        </button>
     </div>
 
 </body>

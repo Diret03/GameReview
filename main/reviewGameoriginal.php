@@ -46,44 +46,41 @@ if (isset($_GET['reviewid'])) {
 }
 ?>
 
+<!DOCTYPE html>
+<html lang="es">
+
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="../css/form.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reseñar Videojuego</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 
 <body>
-    <div class="container">
-        <header class="header">
-            <h1 id="title" class="text-center">Reseñar Videojuego <br><?php echo $name; ?></h1>
-            <p id="description" class="description text-center">
-                <?php echo $description; ?>
-            </p>
-        </header>
-        <form id="survey-form" method="POST">
-            <p><b>Género: </b><?php echo $genre; ?></p>
-            <p><b>Desarrolladora: </b> <?php echo $developer; ?></p>
-            <p><b>Fecha de Lanzamiento: </b> <?php echo $releaseDate; ?></p>
+    <div class="container mt-4 my-5">
+        <h1>Reseñar Videojuego: <?php echo $name; ?></h1>
+        <p><b>Género:</b> <?php echo $genre; ?></p>
+        <p><b>Desarrolladora:</b> <?php echo $developer; ?></p>
+        <p><b>Fecha de Lanzamiento:</b> <?php echo $releaseDate; ?></p>
+        <p><?php echo $description; ?></p>
 
-
+        <form method="POST">
             <div class="form-group">
                 <label for="content">Reseña:</label>
-                <textarea class="input-textarea" id="content" name="content" required></textarea>
+                <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
             </div>
-
             <div class="form-group">
-                <label id="number-label" for="rating">Calificación:</label>
+                <label for="rating">Calificación:</label>
                 <input type="number" class="form-control" id="rating" name="rating" required min="1" max="5">
             </div>
 
-            <div class="form-group">
-                <button type="submit" id="submit" name="submit" class="submit-button">
-                    Enviar Reseña
-                </button>
-            </div>
+            <button type="submit" name="submit" class="btn btn-primary">Enviar Reseña</button>
         </form>
-        <button type="submit" class="submit-button">
-            <a href="../main/index.php">Regresar</a>
+        <button type="button" class="btn btn-primary" style="margin-top: 2px;">
+            <a class="text-light" href="../main/index.php">Regresar</a>
         </button>
     </div>
+
 </body>
+
+</html>

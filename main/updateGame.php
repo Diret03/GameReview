@@ -71,20 +71,33 @@ if (isset($_POST['submit'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Añadir Nuevo Videojuego</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/app.css">
+    <link rel="stylesheet" href="../css/form.css">
+
+    <style>
+        body::before {
+            background-image: linear-gradient(115deg,
+                    rgba(58, 58, 158, 0.8),
+                    rgba(136, 136, 206, 0.7)),
+                /*fondo de pantalla*/
+                url(https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/a3bf6b4c-9a4e-4d58-a3a7-ae498c536802/da30brv-48dbf45d-fe55-4d41-ad5f-721958e2003a.jpg/v1/fill/w_1166,h_685,q_70,strp/playstation_buttons_by_mojojojolabs_da30brv-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NzUyIiwicGF0aCI6IlwvZlwvYTNiZjZiNGMtOWE0ZS00ZDU4LWEzYTctYWU0OThjNTM2ODAyXC9kYTMwYnJ2LTQ4ZGJmNDVkLWZlNTUtNGQ0MS1hZDVmLTcyMTk1OGUyMDAzYS5qcGciLCJ3aWR0aCI6Ijw9MTI4MCJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS5vcGVyYXRpb25zIl19._gsLhp9CwrfYAkN86HCH9aUY8qyX0ugjRP2w4WuvzUs);
+        }
+    </style>
 </head>
 
 <body>
-    <div class="container mt-4 my-5">
-        <h1>Actualizar videojuego</h1>
-        <form method="POST" enctype="multipart/form-data">
+    <div class="container">
+        <header class="header">
+            <h1 id="title" class="text-center">Actualizar videojuego</h1>
+        </header>
+        <form method="POST" enctype="multipart/form-data" id="survey-form">
             <div class="form-group">
                 <label for="name">Nombre:</label>
                 <input type="text" class="form-control" id="name" name="name" required value="<?php echo $name; ?>">
             </div>
             <div class="form-group">
                 <label for="description">Descripción:</label>
-                <textarea class="form-control" id="description" name="description" rows="5" required><?php echo $description; ?></textarea>
+                <textarea class="form-control input-textarea" id="description" name="description" required><?php echo $description; ?></textarea>
             </div>
             <div class="form-group">
                 <label for="releaseDate">Fecha de Lanzamiento:</label>
@@ -102,9 +115,15 @@ if (isset($_POST['submit'])) {
                 <label for="image">Imagen:</label>
                 <input type="file" class="form-control-file" id="image" name="image" accept="image/*" required>
             </div>
-            <button type="submit" name="submit" class="btn btn-primary">Actualizar</button>
+            <div class="form-group">
+                <button type="submit" id="submit" name="submit" class="submit-button">
+                    Actualizar videojuego
+                </button>
+            </div>
         </form>
-        <button type="submit" name="submit" class="btn btn-primary" style="margin-top: 2px;"><a class="text-light" href="../main/games.php">Regresar</a></button>
+        <button type="submit" class="submit-button">
+            <a href="../main/games.php">Regresar</a>
+        </button>
     </div>
 
 </body>
