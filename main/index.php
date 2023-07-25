@@ -1,6 +1,22 @@
 <?php
-// Código PHP para obtener los detalles de los videojuegos desde la base de datos
+
 include '../php/db.php';
+
+//pasos para comprobar que es un cliente y no admin....
+session_start();
+
+$userID = $_SESSION['userID'];
+
+$sqlUser = "SELECT type FROM users WHERE userID='$userID'";
+$resultUser = mysqli_query($con, $sqlUser);
+$user = mysqli_fetch_assoc($resultUser);
+
+if (!isset($_SESSION["userID"]) || $user['type'] != 0) {
+    // Si el usuario no ha iniciado sesión o no es un cliente, redirige a la página de inicio de sesión
+    header('Location: login.php');
+    exit();
+}
+
 
 // Cantidad de juegos a mostrar por página
 $gamesPerPage = 6;
@@ -60,12 +76,6 @@ function getAverage($gameID)
             <ul class="navbar-nav">
                 <li class="nav-item active">
                     <a class="nav-link" href="#">Inicio<span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../main/games.php">Videojuegos</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../main/crudReview.php">Reseñas</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="../main/account.php">Cuenta</a>

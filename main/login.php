@@ -2,9 +2,29 @@
 session_start();
 
 if (isset($_SESSION['userID'])) {
-    // Si el usuario ya ha iniciado sesión, redirigirlo a la página principal
-    header('location: index.php');
-    die();
+    // Si el usuario ya ha iniciado sesión, redirigirlo a la página principal o al dashboard según su tipo
+    $userID = $_SESSION['userID'];
+
+    // Conectar a la base de datos
+    include '../php/db.php';
+
+    // Obtener el tipo de usuario (0 para cliente, 1 para administrador)
+    $sql = "SELECT type FROM users WHERE userID='$userID'";
+    $result = mysqli_query($con, $sql);
+
+    if (mysqli_num_rows($result) > 0) {
+        $user = mysqli_fetch_assoc($result);
+
+        if ($user['type'] == 0) {
+            // Redirigir a index.php si es cliente
+            header('location: index.php');
+            die();
+        } elseif ($user['type'] == 1) {
+            // Redirigir a dashboard.php si es administrador
+            header('location: dashboard.php');
+            die();
+        }
+    }
 }
 
 if (isset($_POST['submit'])) {
@@ -25,8 +45,15 @@ if (isset($_POST['submit'])) {
         if ($password === $user['password']) {
             // Iniciar sesión exitosamente
             $_SESSION['userID'] = $user['userID'];
-            header('location: index.php');
-            die();
+
+            // Redirigir a la página principal o al dashboard según el tipo de usuario
+            if ($user['type'] == 0) {
+                header('location: index.php');
+                die();
+            } elseif ($user['type'] == 1) {
+                header('location: dashboard.php');
+                die();
+            }
         } else {
             $error_message = "Contraseña incorrecta. Por favor, intenta nuevamente.";
         }
@@ -35,6 +62,7 @@ if (isset($_POST['submit'])) {
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="es">

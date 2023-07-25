@@ -1,34 +1,66 @@
 <?php
-session_start();
-
-// Obtener el nombre de usuario del usuario actual
 include '../php/db.php';
+
+//pasos para obtener nombre de usuario...
+session_start();
+// Obtener el ID del usuario actual desde la sesión
 $userID = $_SESSION['userID'];
 
-$sql = "SELECT username FROM users WHERE userID=$userID";
+$sqlUser = "SELECT type FROM users WHERE userID='$userID'";
+$resultUser = mysqli_query($con, $sqlUser);
+$user = mysqli_fetch_assoc($resultUser);
+
+$sql = "SELECT * FROM review WHERE userID = '$userID'";
 $result = mysqli_query($con, $sql);
-$user = mysqli_fetch_assoc($result);
 
-// Al precionar el boton cambie la contraseña
-if (isset($_POST['change']) && !empty($_POST['nueva_contrasena']) && !empty($_POST['confirmar_contrasena'])) {
-    $nuevaContrasena = $_POST['nueva_contrasena'];
-    $confirmarContrasena = $_POST['confirmar_contrasena'];
+function getUsername($userID)
+{
+    global $con;
+    $sql = "SELECT username FROM users WHERE userID=$userID";
+    $result = mysqli_query($con, $sql);
+    $row = mysqli_fetch_assoc($result);
+    return $row['username'];
+}
 
-    // Verificar que las contraseñas coincidan
-    if ($nuevaContrasena === $confirmarContrasena) {
-        $updateSql = "UPDATE users SET password='$nuevaContrasena' WHERE userID=$userID";
+// Verificar si se ha enviado el formulario
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
+    // Obtener la nueva contraseña y confirmar contraseña del formulario
+    $newPassword = $_POST["newPassword"];
+    $confirmPassword = $_POST["confirmPassword"];
 
-        if (mysqli_query($con, $updateSql)) {
-            echo '<script>alert("Contraseña Cambiada Exitosamente");</script>';
-        } else {
-            echo '<script>alert("no se puede cambiar la contraseña");</script>';
-        }
+    // Verificar si las contraseñas coinciden
+    if ($newPassword !== $confirmPassword) {
+        $error_message = "Las contraseñas no coinciden.";
     } else {
-        echo '<script>alert("No coinciden intentelo nuevamente");</script>';
+        // Validar la nueva contraseña según tus requisitos de seguridad
+        // Puedes agregar tus propias reglas de validación aquí
+
+
+        $sql = "UPDATE users SET password='$newPassword' WHERE userID=$userID";
+
+        $result = mysqli_query($con, $sql);
+
+        if ($result) {
+            // Contraseña actualizada exitosamente
+            if ($user['type'] == 0) {
+                // Redirigir a account.php si es cliente
+                header('location: account.php');
+                die();
+            } elseif ($user['type'] == 1) {
+                // Redirigir a crudReview.php si es administrador
+                header('location: dashboard.php');
+                die();
+            }
+        } else {
+            // Ocurrió un error al actualizar la contraseña
+            $error_message = "Ocurrió un error al cambiar la contraseña. Inténtalo de nuevo más tarde.";
+        }
     }
 }
 
 ?>
+
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -37,62 +69,66 @@ if (isset($_POST['change']) && !empty($_POST['nueva_contrasena']) && !empty($_PO
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cambiar Contraseña</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-image: url('https://ergo2play.com/cdn/shop/articles/M314_1080x.jpg?v=1633105598');
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center;
-        }
-
-        .btn-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .btn-container .btn {
-            border: none;
-            margin: 10px;
-            font-size: 12px;
-            padding: 20px 40px;
-            height: 50px;
-            width: 200px;
-            background: linear-gradient(to right, #030126, #06dea4);
-        }
-
-        h1,
-        label {
-            color: white;
-        }
-
-        form {
-            background-color: #007bff;
-            backdrop-filter: blur(10px);
-        }
-    </style>
+    <link rel="stylesheet" href="../css/app.css">
 </head>
 
 <body>
-    <form action="" method="POST">
-        <div class="btn-container">
-            <h1 class="text-center mb-5">Cambio de contraseña, <?php echo $user['username']; ?>!</h1>
-            <form method="POST">
-                <section>
-                    <label for="nueva_contrasena">Nueva contraseña:</label>
-                    <input class="form-control" type="password" id="nueva_contrasena" name="nueva_contrasena" required>
-                    <label for="confirmar_contrasena">Confirmar nueva contraseña:</label>
-                    <input class="form-control" type="password" id="confirmar_contrasena" name="confirmar_contrasena" required>
-                </section>
-                <button type="submit" name="change" class="btn btn-primary">Cambiar Contraseña</button>
-            </form>
-        </div>
-    </form>
 
+    <section class="vh-100" style="background-color: #eee;">
+        <div class="container h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-lg-12 col-xl-11">
+                    <div class="card text-black" style="border-radius: 25px;">
+                        <div class="card-body p-md-5">
+                            <div class="row justify-content-center">
+                                <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
+
+                                    <p class="text-center h1 fw-bold mt-4">Cambiar Contraseña</p>
+
+                                    <p class="text-center mb-4"><?php echo getUsername($userID); ?></p> <!-- Mostrar nombre de usuario -->
+
+
+                                    <?php if (isset($error_message)) : ?>
+                                        <div class="alert alert-danger" role="alert">
+                                            <?php echo $error_message; ?> <!-- Mostrar mensaje de error si las contraseñas no coinciden -->
+                                        </div>
+                                    <?php endif; ?>
+                                    <form class="mx-1 mx-md-4" method="POST">
+
+                                        <div class="d-flex flex-row align-items-center mb-4">
+                                            <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
+                                            <div class="form-outline flex-fill mb-0">
+                                                <label for="newPassword">Nueva Contraseña:</label>
+                                                <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex flex-row align-items-center mb-4">
+                                            <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
+                                            <div class="form-outline flex-fill mb-0">
+                                                <label for="confirmPassword">Cambiar Contraseña:</label>
+                                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
+                                            <button type="submit" name="submit" class="btn btn-primary">Cambiar Contraseña</button>
+                                        </div>
+                                    </form>
+                                    <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
+                                        <a href="../main/account.php">Regresar</a>
+                                    </div>
+                                </div>
+                                <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
+
+                                    <img src="https://admin.registeredemail.com/uploads/2021/02/honeypot-hackers-twitter-heats.png" class="img-fluid" alt="Sample image">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 </body>
 
 </html>

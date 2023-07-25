@@ -19,7 +19,40 @@ if (isset($_POST['submit'])) {
             $error_message = "El correo electrónico ya está registrado. Por favor, utiliza otro correo.";
         } else {
             // Insertar el nuevo usuario en la base de datos
-            $sql = "INSERT INTO users (username, email, password) VALUES ('$username', '$email', '$password')";
+            $sql = "INSERT INTO users (username, email, password, type) VALUES ('$username', '$email', '$password', 0)";
+            $result = mysqli_query($con, $sql);
+
+            if ($result) {
+                // Redirigir al usuario a la página de inicio de sesión después del registro exitoso
+                header('location: login.php');
+                die();
+            } else {
+                $error_message = "Hubo un error al registrar el usuario. Por favor, intenta nuevamente.";
+            }
+        }
+    }
+}
+
+if (isset($_POST['submitAdmin'])) {
+    $username = $_POST['username'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    // Validar que los campos no estén vacíos
+    if (empty($username) || empty($email) || empty($password)) {
+        $error_message = "Por favor, completa todos los campos.";
+    } else {
+        // Conectar a la base de datos
+        include '../php/db.php';
+
+        // Verificar si el correo electrónico ya está registrado
+        $sql = "SELECT * FROM users WHERE email='$email'";
+        $result = mysqli_query($con, $sql);
+        if (mysqli_num_rows($result) > 0) {
+            $error_message = "El correo electrónico ya está registrado. Por favor, utiliza otro correo.";
+        } else {
+            // Insertar el nuevo usuario en la base de datos
+            $sql = "INSERT INTO users (username, email, password, type) VALUES ('$username', '$email', '$password', 1)";
             $result = mysqli_query($con, $sql);
 
             if ($result) {
@@ -86,17 +119,18 @@ if (isset($_POST['submit'])) {
                                                 <input type="password" class="form-control" id="password" name="password" required>
                                             </div>
                                         </div>
-                                        <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                                            <button type="submit" name="submit" class="btn btn-primary">Registrarse</button>
+                                        <div class="d-flex justify-content-center mx-3 mb-3">
+                                            <button type="submit" name="submit" class="btn btn-primary">Registrarse como cliente</button>
+                                        </div>
+                                        <div class="d-flex justify-content-center mb-3">
+                                            <button type="submit" name="submitAdmin" class="btn btn-primary">Registrarse como admin</button>
                                         </div>
                                     </form>
                                     <p>¿Ya tienes una cuenta? <a href="login.php">Inicia sesión aquí</a></p>
-
                                 </div>
                                 <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
 
                                     <img src="https://www.seekpng.com/png/detail/19-190187_video-games-video-game-icons.png" class="img-fluid" alt="Sample image">
-
                                 </div>
                             </div>
                         </div>
