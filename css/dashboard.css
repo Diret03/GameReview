@@ -37,3 +37,11 @@ img {
     margin-left: auto;
     margin-right: auto;
 }
+
+div.row main #form-container #btnAdd {
+    float: left !important;
+}
+
+.form-inline {
+    float: right !important;
+}

@@ -17,7 +17,6 @@ if (!isset($_SESSION["userID"]) || $user['type'] != 0) {
     exit();
 }
 
-
 // Cantidad de juegos a mostrar por página
 $gamesPerPage = 6;
 
@@ -53,6 +52,19 @@ function getAverage($gameID)
 
     return $promedio;
 }
+
+if (isset($_GET['search'])) {
+    // Obtener el término de búsqueda ingresado por el usuario
+    $searchTerm = mysqli_real_escape_string($con, $_GET['search']);
+
+    // Consulta para buscar videojuegos que coincidan con el título, desarrolladora o género
+    $sqlSearch = "SELECT * FROM games WHERE name LIKE '%$searchTerm%' OR developer LIKE '%$searchTerm%' OR genre LIKE '%$searchTerm%'";
+    $resultSearch = mysqli_query($con, $sqlSearch);
+} else {
+    // Si no se realizó una búsqueda, mostrar todos los videojuegos paginados como antes
+    $sqlSearch = "SELECT * FROM games LIMIT $start, $gamesPerPage";
+    $resultSearch = mysqli_query($con, $sqlSearch);
+}
 ?>
 
 <!DOCTYPE html>
@@ -63,60 +75,59 @@ function getAverage($gameID)
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="../css/app.css">
+    <link rel="stylesheet" href="../css/index.css">
     <title>Inicio</title>
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Virtual Verdicts</a>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" id="barraInicio">
+        <a class="navbar-brand">Virtual Verdicts</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav">
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">Inicio<span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="../main/index.php">Inicio</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="../main/account.php">Cuenta</a>
                 </li>
             </ul>
         </div>
-        <style>
-            /* Estilo para que todas las imágenes tengan el mismo tamaño */
-            .card-img-top {
-                height: 420px;
-                object-fit: cover;
-            }
-        </style>
+        <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="search" name="search" placeholder="Buscar videojuego">
+            <button class="btn btn-primary my-2 my-sm-0" type="submit">Buscar</button>
+        </form>
     </nav>
-    <section style="background-color: #eee;">
+    <section>
         <div class="container py-5">
             <?php
             $count = 0;
-            while ($row = mysqli_fetch_assoc($result)) {
-                if ($count % 3 === 0) {
-                    echo '<div class="row">';
-                }
+            if (mysqli_num_rows($resultSearch) > 0) {
+                while ($row = mysqli_fetch_assoc($resultSearch)) {
+                    if ($count % 3 === 0) {
+                        echo '<div class="row">';
+                    }
 
-                // Aquí obtén los valores específicos del videojuego desde la fila actual en $row
-                $gameID = $row['gameID'];
-                $name = $row['name'];
-                $genre = $row['genre'];
-                $releaseDate = $row['releaseDate'];
-                $developer = $row['developer'];
+                    // Aquí obtén los valores específicos del videojuego desde la fila actual en $row
+                    $gameID = $row['gameID'];
+                    $name = $row['name'];
+                    $genre = $row['genre'];
+                    $releaseDate = $row['releaseDate'];
+                    $developer = $row['developer'];
 
-                if (getAverage($gameID) == 0) {
-                    $calificacion = '-/5';
-                } else
-                    $calificacion = getAverage($gameID) . '/5'; // Esto debe reemplazarse por la calificación real del videojuego
+                    if (getAverage($gameID) == 0) {
+                        $calificacion = '-/5';
+                    } else
+                        $calificacion = getAverage($gameID) . '/5'; // Esto debe reemplazarse por la calificación real del videojuego
 
-                // Convertir el BLOB de la imagen en una URL válida (esquema data URI)
-                $imageData = $row['image'];
-                $base64Image = base64_encode($imageData);
-                $imageURL = 'data:image/jpeg;base64,' . $base64Image;
+                    // Convertir el BLOB de la imagen en una URL válida (esquema data URI)
+                    $imageData = $row['image'];
+                    $base64Image = base64_encode($imageData);
+                    $imageURL = 'data:image/jpeg;base64,' . $base64Image;
 
-                echo '
+                    echo '
                 <div class="col-md-12 col-lg-4 mb-4 mb-lg-0">
                     <div class="card">
                         <div class="d-flex justify-content-between p-3">
@@ -141,11 +152,16 @@ function getAverage($gameID)
                 </div>
                 ';
 
-                $count++;
+                    $count++;
 
-                if ($count % 3 === 0) {
-                    echo '</div>';
+                    if ($count % 3 === 0) {
+                        echo '</div>';
+                    }
                 }
+            } else {
+                echo '<div class="alert alert-info" role="alert">
+                        No se encontró ningún videojuego.
+                      </div>';
             }
 
             // Si el número total de videojuegos no es múltiplo de 3, cierra la última fila con </div>
@@ -175,9 +191,9 @@ function getAverage($gameID)
             ?>
         </ul>
     </nav>
-    <footer class="bg-light text-center text-lg-start">
+    <footer class="text-center text-lg-start">
         <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
-            <!-- Footer -->
+            <p> © 2023 Copyright: Virtual Verdicts</p>
         </div>
     </footer>
 </body>

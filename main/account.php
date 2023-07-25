@@ -60,11 +60,12 @@ if (isset($_GET['logout'])) {
 
     <link rel="stylesheet" href="../css/app.css">
     <link rel="stylesheet" href="../css/account.css">
+    <link rel="stylesheet" href="../css/index.css">
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Virtual Verdicts</a>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" id="barraInicio">
+        <a class="navbar-brand">Virtual Verdicts</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -74,7 +75,7 @@ if (isset($_GET['logout'])) {
                     <a class="nav-link" href="../main/index.php">Inicio</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="../main/account.php">Cuenta<span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="../main/account.php">Cuenta</a>
                 </li>
             </ul>
         </div>

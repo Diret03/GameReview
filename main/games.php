@@ -32,9 +32,16 @@
             <!-- Contenido principal -->
             <main class="col-md-10 main-content">
                 <h1 class="mb-4">Videojuegos</h1>
-                <button class="btn btn-primary">
-                    <a href="../main/addGame.php" class="text-light">Agregar videojuego</a>
-                </button>
+                <div id="form-container">
+                    <button class="btn btn-primary" id="btnAdd">
+                        <a href="../main/addGame.php" class="text-light">Agregar videojuego</a>
+                    </button>
+                    <form class="form-inline">
+                        <input class="form-control mr-sm-2" type="search" name="search" placeholder="Buscar videojuego">
+                        <button class="btn btn-primary my-2 my-sm-0" type="submit">Buscar</button>
+                    </form>
+                </div>
+
                 <table class="table table-striped">
                     <thead>
                         <tr>

@@ -1,0 +1,88 @@
+body {
+    background-color: #edf6f9;
+    /* background-color: #fccfcf;*/
+}
+
+section,
+nav {
+    background-color: inherit;
+
+}
+
+#barraInicio a {
+    color: white !important;
+    border: 2px solid white;
+    padding: 15px 20px;
+}
+
+footer p {
+    color: white !important;
+}
+
+#barraInicio,
+footer {
+    background-color: #38040e !important;
+    padding: 15px 50px;
+
+}
+
+a.navbar-brand {
+    border: none !important;
+}
+
+
+#navbarNavDropdown ul.navbar-nav li>a:hover {
+    background-color: #fff0f3;
+    color: black !important;
+}
+
+.pagination li.active a.page-link,
+button.btn-primary {
+    background-color: #c1121f;
+    color: black;
+    border-color: black;
+
+    /*ffb3c1*/
+}
+
+.pagination li a {
+    background-color: #fff0f3;
+    color: black;
+
+    /*ffb3c1*/
+}
+
+
+.pagination li a:hover,
+button.btn-primary:hover {
+    background-color: #ffb3c1;
+    border-color: black;
+
+    /*ffb3c1*/
+}
+
+.card {
+
+    border: 2px solid #38040e;
+}
+
+.card button.btn-primary a:hover {
+    color: black !important;
+}
+
+.card-img-top {
+    height: 420px;
+    object-fit: cover;
+    border: 2px solid #38040e;
+    border-left: none;
+    border-right: none;
+}
+
+.text-danger {
+    color: #ad2831 !important;
+}
+
+div.alert-info {
+    border: 2px solid #38040e;
+    background-color: #ffb3c1;
+}
