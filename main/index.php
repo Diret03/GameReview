@@ -53,7 +53,7 @@ function getAverage($gameID)
     return $promedio;
 }
 
-// Función para obtener el nombre del genero a partir de su genderID
+// Función para obtener el nombre del genero a partir de su genreID
 function getGenreName($genreID)
 {
     global $con;
@@ -68,7 +68,13 @@ if (isset($_GET['search'])) {
     $searchTerm = mysqli_real_escape_string($con, $_GET['search']);
 
     // Consulta para buscar videojuegos que coincidan con el título, desarrolladora o género
-    $sqlSearch = "SELECT * FROM games WHERE name LIKE '%$searchTerm%' OR developer LIKE '%$searchTerm%' OR genre LIKE '%$searchTerm%'";
+    $sqlSearch = "SELECT games.*, genres.genreName
+    FROM games
+    LEFT JOIN genres ON games.genreID = genres.genreID
+    WHERE games.name LIKE '%$searchTerm%'
+    OR games.developer LIKE '%$searchTerm%'
+    OR genres.genreName LIKE '%$searchTerm%'";
+    
     $resultSearch = mysqli_query($con, $sqlSearch);
 } else {
     // Si no se realizó una búsqueda, mostrar todos los videojuegos paginados como antes
