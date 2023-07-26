@@ -1,5 +1,21 @@
 <?php
+
 include '../php/db.php';
+
+//pasos para comprobar que es un admin y no cliente....
+session_start();
+
+$userID = $_SESSION['userID'];
+
+$sqlUser = "SELECT type FROM users WHERE userID='$userID'";
+$resultUser = mysqli_query($con, $sqlUser);
+$user = mysqli_fetch_assoc($resultUser);
+
+if (!isset($_SESSION["userID"]) || $user['type'] != 1) {
+    // Si el usuario no ha iniciado sesión o no es un cliente, redirige a la página de inicio de sesión
+    header('Location: login.php');
+    exit();
+}
 
 // Cantidad de filas a mostrar por página
 $rowsPerPage = 10;
@@ -7,17 +23,8 @@ $rowsPerPage = 10;
 if (isset($_GET['search'])) {
     $searchTerm = mysqli_real_escape_string($con, $_GET['search']);
 
-    // Consulta para buscar reseñas que coincidan con el calificación, comentario, reviewID, nombre del juego o nombre de usuario
-    $sqlSearch = "SELECT review.*, users.username, games.name AS gameName
-                  FROM review
-                  LEFT JOIN users ON review.userID = users.userID
-                  LEFT JOIN games ON review.gameID = games.gameID
-                  WHERE review.reviewID LIKE '%$searchTerm%'
-                  OR review.rating LIKE '%$searchTerm%'
-                  OR review.comment LIKE '%$searchTerm%'
-                  OR users.username LIKE '%$searchTerm%'
-                  OR games.name LIKE '%$searchTerm%'";
-
+    // Consulta para buscar usuarios que coincidan con el título, desarrolladora o género
+    $sqlSearch = "SELECT * FROM users WHERE userID LIKE '%$searchTerm%' OR username LIKE '%$searchTerm%' OR email LIKE '%$searchTerm%'";
     $resultSearch = mysqli_query($con, $sqlSearch);
 
     // Obtener el número total de filas en la búsqueda
@@ -36,12 +43,12 @@ if (isset($_GET['search'])) {
     $start = ($currentPage - 1) * $rowsPerPage;
     $end = min($start + $rowsPerPage - 1, $totalRows - 1);
 
-    // Consulta para obtener las filas de reseñas de la búsqueda actual
-    $sqlReviewsPage = $sqlSearch . " LIMIT $start, $rowsPerPage";
-    $resultReviewsPage = mysqli_query($con, $sqlReviewsPage);
+    // Consulta para obtener las filas de videojuegos de la búsqueda actual
+    $sqlGamesPage = $sqlSearch . " LIMIT $start, $rowsPerPage";
+    $resultUsersPage = mysqli_query($con, $sqlGamesPage);
 } else {
-    // Si no se realizó una búsqueda, mostrar todos las reseñas paginadas como antes
-    $sqlTotalRows = "SELECT COUNT(*) AS totalRows FROM review";
+    // Si no se realizó una búsqueda, mostrar todos los usuarios paginados como antes
+    $sqlTotalRows = "SELECT COUNT(*) AS totalRows FROM users";
     $resultTotalRows = mysqli_query($con, $sqlTotalRows);
     $rowTotalRows = mysqli_fetch_assoc($resultTotalRows);
     $totalRows = $rowTotalRows['totalRows'];
@@ -57,28 +64,12 @@ if (isset($_GET['search'])) {
     $end = min($start + $rowsPerPage - 1, $totalRows - 1);
 
     // Consulta para obtener las filas de videojuegos de la página actual
-    $sqlReviewsPage = "SELECT * FROM review LIMIT $start, $rowsPerPage";
-    $resultReviewsPage = mysqli_query($con, $sqlReviewsPage);
-}
-// Función para obtener el nombre del usuario a partir de su userID
-function getUsername($userID)
-{
-    global $con;
-    $sql = "SELECT username FROM users WHERE userID=$userID";
-    $result = mysqli_query($con, $sql);
-    $row = mysqli_fetch_assoc($result);
-    return $row['username'];
+    $sqlGamesPage = "SELECT * FROM users LIMIT $start, $rowsPerPage";
+    $resultUsersPage = mysqli_query($con, $sqlGamesPage);
 }
 
-function getGameName($gameID)
-{
-    global $con;
-    $sql = "SELECT name FROM games WHERE gameID=$gameID";
-    $result = mysqli_query($con, $sql);
-    $row = mysqli_fetch_assoc($result);
-    return $row['name'];
-}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="es">
@@ -86,7 +77,7 @@ function getGameName($gameID)
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reseñas de Videojuegos</title>
+    <title>Usuarios</title>
     <link rel="stylesheet" href="../css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -97,6 +88,7 @@ function getGameName($gameID)
 
 </head>
 
+
 <body>
     <div class="container-fluid">
         <div class="row">
@@ -105,73 +97,77 @@ function getGameName($gameID)
                 <h3 class="text-center">Dashboard</h3>
                 <a href="../main/dashboard.php">Inicio</a>
                 <a href="../main/games.php">Videojuegos</a>
-                <a href="../main/crudReview.php" class=" active">Reseñas</a>
-                <a href="../main/users.php">Usuarios</a>
+                <a href="../main/crudReview.php">Reseñas</a>
+                <a href="../main/users.php" class="active">Usuarios</a>
                 <a href="../main/changepassword.php">Cambiar Contraseña</a>
                 <a href="../php/logout.php">Cerrar Sesión</a>
             </nav>
 
             <!-- Contenido principal -->
             <main class="col-md-10 main-content">
-                <h1 class="mb-4">Reseñas de Videojuegos</h1>
+                <h1 class="mb-4">Usuarios</h1>
                 <div id="form-container">
+                    <button class="btn btn-primary" id="btnAdd">
+                        <a href="../main/addUser.php" class="text-light">Agregar usuario</a>
+                    </button>
                     <form class="form-inline" method="GET">
-                        <input class="form-control mr-sm-2" type="search" name="search" placeholder="Buscar reseña">
+                        <input class="form-control mr-sm-2" type="search" name="search" placeholder="Buscar usuario">
                         <button class="btn btn-primary my-2 my-sm-0" type="submit">Buscar</button>
                     </form>
                 </div>
+
                 <table class="table table-striped">
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Usuario(ID)</th>
-                            <th>Título del Videojuego(ID)</th>
-                            <th>Calificación</th>
-                            <th>Comentario</th>
+                            <th>Nombre de usuario</th>
+                            <th>Email</th>
+                            <th>Contraseña</th>
+                            <th>Tipo</th>
                         </tr>
                     </thead>
-                    <tbody id="tabla-resenas">
+                    <tbody id="tabla">
                         <?php
-
-                        if (mysqli_num_rows($resultReviewsPage) > 0) {
-                            while ($row = mysqli_fetch_assoc($resultReviewsPage)) {
-                                $reviewID = $row['reviewID'];
+                        include '../php/db.php';
+                        if (mysqli_num_rows($resultUsersPage) > 0) {
+                            while ($row = mysqli_fetch_assoc($resultUsersPage)) {
+                                // Obtener los datos del videojuego
                                 $userID = $row['userID'];
-                                $gameID = $row['gameID'];
-                                $rating = $row['rating'];
-                                $comment = $row['comment'];
+                                $username = $row['username'];
+                                $email = $row['email'];
+                                $password = $row['password'];
+                                $type = $row['type'];
 
+                                // Generar la fila de la tabla para el videojuego actual
                                 $tablaHTML = '';
                                 $tablaHTML .= '<tr>';
-                                $tablaHTML .= '<td>' . $reviewID . '</td>';
-                                $tablaHTML .= '<td>' . getUsername($userID) . '(' . $userID . ')' . '</td>';
-                                $tablaHTML .= '<td>' . getGameName($gameID) . '(' . $gameID . ')' . '</td>';
-                                $tablaHTML .= '<td>' . $rating . '/5</td>';
-                                $tablaHTML .= '<td>';
-                                $tablaHTML .= '<button class="btn btn-primary btn-comment" data-toggle="collapse" data-target="#comentario-' . $reviewID . '">
-                            <i class="fas fa-plus"></i>
-                            </button>';
-                                $tablaHTML .= '<div id="comentario-' . $reviewID . '" class="collapse">' . $comment . '</div>';
-                                $tablaHTML .= '</td>';
+                                $tablaHTML .= '<td>' . $userID . '</td>';
+                                $tablaHTML .= '<td>' . $username . '</td>';
+                                $tablaHTML .= '<td>' . $email . '</td>';
+                                $tablaHTML .= '<td>' . $password . '</td>';
+                                $tablaHTML .= '<td>' . $type . '</td>';
                                 $tablaHTML .= '<td>' .
                                     '       
-                            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-                            <div class="btn-group mr-2" role="group" aria-label="Eliminar">
-                                <button type="button" class="btn btn-danger">
-                                <a class="fas fa-trash-alt text-light" href="../main/deleteReview.php?deleteid=' . $reviewID . '"></a>
-                            </button>
-                            </div>
-                        </div>'
+                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                <div class="btn-group mr-2" role="group" aria-label="Actualizar y Eliminar">
+
+                    <button type="button" class="btn btn-primary">
+                    <a class="fas fa-sync-alt text-light" href="../main/updateUser.php?updateid=' . $userID . '"></a>
+                </button>
+                    <button type="button" class="btn btn-danger">
+                    <a class="fas fa-trash-alt text-light" href="../main/deleteUser.php?deleteid=' . $userID . '"></a>
+                </button>
+                </div>
+            </div>'
                                     . '</td>';
                                 $tablaHTML .= '</tr>';
                                 echo $tablaHTML;
                             }
                         } else {
                             echo '<td colspan="6" class="alert alert-info" role="alert">
-                                    <p class="text-center">No se encontró ninguna reseña.</p>                           
+                                    <p class="text-center">No se encontró ningún usuario.</p>                           
                                   </td>';
                         }
-
                         ?>
                     </tbody>
                 </table>
@@ -196,10 +192,9 @@ function getGameName($gameID)
                 </nav>
             </main>
 
+            <script src="../js/desplegarGame.js"></script>
         </div>
     </div>
-
-    <script src="../js/desplegarCrudComment.js"></script>
 
 </body>
 

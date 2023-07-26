@@ -43,6 +43,7 @@ if (!isset($_SESSION["userID"]) || $user['type'] != 1) {
                 <a href="../main/dashboard.php" class=" active">Inicio</a>
                 <a href="../main/games.php">Videojuegos</a>
                 <a href="../main/crudReview.php">Reseñas</a>
+                <a href="../main/users.php">Usuarios</a>
                 <a href="../main/changepassword.php">Cambiar Contraseña</a>
                 <a href="../php/logout.php">Cerrar Sesión</a>
             </nav>

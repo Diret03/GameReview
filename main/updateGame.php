@@ -34,7 +34,11 @@ if (isset($_POST['submit'])) {
         $stmt = mysqli_prepare($con, $sql);
 
         if ($stmt) {
-            // Bindeamos los valores a la sentencia
+            // Bindeamos los valores a la sentencia  
+
+            /*Al bindear los valores, se asegura de que los datos se traten de manera segura y 
+           se eviten problemas de inyección de SQL y errores de sintaxis en la consulta. */
+
             mysqli_stmt_bind_param($stmt, "ssssssi", $name, $description, $releaseDate, $genre, $developer, $newImageData, $gameID);
         }
     } else {
