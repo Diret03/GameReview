@@ -1,0 +1,26 @@
+Integrantes: Diego Recalde, Juan Ulcuango y Jordan Puruncajas.
+
+Pasos:
+
+Si la importacion mediante phpmyadmin no sirve:
+
+1. Crear en phpmyadmin una base de datos con el nombre "gamereview".
+2. Abrir cmd.
+3. Establecer ruta mysql mediante el comando: 
+     set path=%PATH%;C:\xampp\mysql\bin;
+    
+   Reemplazar ruta en dónde esté instalado XAMPP/MAMP
+
+4. Escribir el siguiente comando:
+
+   mysql -u "nombre de usuario" -p "nombre de base de datos" < "ubicacionBase.sql"
+   
+   Ejemplo:
+   
+   mysql -u root -p gamereview < C:\xampp\htdocs\GameReview\gamereview.sql
+    
+5. Si el comando fue ingresado correctamente:
+   Ingresar la contraseña del usuario de la base de datos.
+
+6. Esperar a que termine la importación.
+7. Comprobar en phpmyadmin.
