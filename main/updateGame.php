@@ -3,6 +3,15 @@
 include '../php/db.php';
 $gameID = $_GET['updateid'];
 
+// Obtener los géneros desde la tabla "genres"
+$sqlGenres = "SELECT * FROM genres";
+$resultGenres = mysqli_query($con, $sqlGenres);
+
+$genres = array();
+while ($rowGenre = mysqli_fetch_assoc($resultGenres)) {
+    $genres[$rowGenre['genreID']] = $rowGenre['genreName'];
+}
+
 $sql = "SELECT * FROM games WHERE gameID=$gameID";
 $result = mysqli_query($con, $sql);
 $row = mysqli_fetch_assoc($result);
@@ -11,7 +20,7 @@ $gameID = $row['gameID'];
 $name = $row['name'];
 $description = $row['description'];
 $releaseDate = $row['releaseDate'];
-$genre = $row['genre'];
+$genre = $row['genreID'];
 $developer = $row['developer'];
 
 if (isset($_POST['submit'])) {
@@ -30,7 +39,7 @@ if (isset($_POST['submit'])) {
         $newImageData = file_get_contents($newImage);
 
         // Preparamos la consulta SQL para actualizar el juego con la nueva imagen
-        $sql = "UPDATE games SET name=?, description=?, releaseDate=?, genre=?, developer=?, image=? WHERE gameID=?";
+        $sql = "UPDATE games SET name=?, description=?, releaseDate=?, genreID=?, developer=?, image=? WHERE gameID=?";
         $stmt = mysqli_prepare($con, $sql);
 
         if ($stmt) {
@@ -38,12 +47,11 @@ if (isset($_POST['submit'])) {
 
             /*Al bindear los valores, se asegura de que los datos se traten de manera segura y 
            se eviten problemas de inyección de SQL y errores de sintaxis en la consulta. */
-
             mysqli_stmt_bind_param($stmt, "ssssssi", $name, $description, $releaseDate, $genre, $developer, $newImageData, $gameID);
         }
     } else {
         // Si no se cargó una nueva imagen, actualizamos el juego sin modificar la imagen
-        $sql = "UPDATE games SET name=?, description=?, releaseDate=?, genre=?, developer=? WHERE gameID=?";
+        $sql = "UPDATE games SET name=?, description=?, releaseDate=?, genreID=?, developer=? WHERE gameID=?";
         $stmt = mysqli_prepare($con, $sql);
 
         if ($stmt) {
@@ -109,7 +117,12 @@ if (isset($_POST['submit'])) {
             </div>
             <div class="form-group">
                 <label for="genre">Género:</label>
-                <input type="text" class="form-control" id="genre" name="genre" required value="<?php echo $genre; ?>">
+                <select id="genre" name="genre" class="form-control" required>
+                    <option disabled value="">Seleccionar género</option>
+                    <?php foreach ($genres as $genreID => $genreName) { ?>
+                        <option value="<?php echo $genreID; ?>" <?php if ($genre == $genreID) echo "selected"; ?>><?php echo $genreName; ?></option>
+                    <?php } ?>
+                </select>
             </div>
             <div class="form-group">
                 <label for="developer">Desarrolladora:</label>

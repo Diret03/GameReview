@@ -17,24 +17,14 @@ if (!isset($_SESSION["userID"]) || $user['type'] != 1) {
     exit();
 }
 
-// Función para obtener el nombre del genero a partir de su genderID
-function getGenreName($genreID)
-{
-    global $con;
-    $sql = "SELECT genreName FROM genres WHERE genreID =$genreID";
-    $result = mysqli_query($con, $sql);
-    $row = mysqli_fetch_assoc($result);
-    return $row['genreName'];
-}
-
 // Cantidad de filas a mostrar por página
 $rowsPerPage = 10;
 
 if (isset($_GET['search'])) {
     $searchTerm = mysqli_real_escape_string($con, $_GET['search']);
 
-    // Consulta para buscar videojuegos que coincidan con el título, desarrolladora o género
-    $sqlSearch = "SELECT * FROM games WHERE name LIKE '%$searchTerm%' OR developer LIKE '%$searchTerm%' OR genre LIKE '%$searchTerm%'";
+    // Consulta para buscar usuarios que coincidan con el título, desarrolladora o género
+    $sqlSearch = "SELECT * FROM genres WHERE genreID LIKE '%$searchTerm%' OR genreName LIKE '%$searchTerm%'";
     $resultSearch = mysqli_query($con, $sqlSearch);
 
     // Obtener el número total de filas en la búsqueda
@@ -55,10 +45,10 @@ if (isset($_GET['search'])) {
 
     // Consulta para obtener las filas de videojuegos de la búsqueda actual
     $sqlGamesPage = $sqlSearch . " LIMIT $start, $rowsPerPage";
-    $resultGamesPage = mysqli_query($con, $sqlGamesPage);
+    $resultUsersPage = mysqli_query($con, $sqlGamesPage);
 } else {
-    // Si no se realizó una búsqueda, mostrar todos los videojuegos paginados como antes
-    $sqlTotalRows = "SELECT COUNT(*) AS totalRows FROM games";
+    // Si no se realizó una búsqueda, mostrar todos los usuarios paginados como antes
+    $sqlTotalRows = "SELECT COUNT(*) AS totalRows FROM genres";
     $resultTotalRows = mysqli_query($con, $sqlTotalRows);
     $rowTotalRows = mysqli_fetch_assoc($resultTotalRows);
     $totalRows = $rowTotalRows['totalRows'];
@@ -74,8 +64,8 @@ if (isset($_GET['search'])) {
     $end = min($start + $rowsPerPage - 1, $totalRows - 1);
 
     // Consulta para obtener las filas de videojuegos de la página actual
-    $sqlGamesPage = "SELECT * FROM games LIMIT $start, $rowsPerPage";
-    $resultGamesPage = mysqli_query($con, $sqlGamesPage);
+    $sqlGamesPage = "SELECT * FROM genres LIMIT $start, $rowsPerPage";
+    $resultUsersPage = mysqli_query($con, $sqlGamesPage);
 }
 
 ?>
@@ -87,7 +77,7 @@ if (isset($_GET['search'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reseñas de Videojuegos</title>
+    <title>Usuarios</title>
     <link rel="stylesheet" href="../css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -106,23 +96,23 @@ if (isset($_GET['search'])) {
             <nav class="col-md-2 sidebar">
                 <h3 class="text-center">Dashboard</h3>
                 <a href="../main/dashboard.php">Inicio</a>
-                <a href="../main/games.php" class="active">Videojuegos</a>
+                <a href="../main/games.php">Videojuegos</a>
                 <a href="../main/crudReview.php">Reseñas</a>
                 <a href="../main/users.php">Usuarios</a>
-                <a href="../main/genres.php">Géneros</a>
+                <a href="../main/genres.php" class="active">Géneros</a>
                 <a href="../main/changepassword.php">Cambiar Contraseña</a>
                 <a href="../php/logout.php">Cerrar Sesión</a>
             </nav>
 
             <!-- Contenido principal -->
             <main class="col-md-10 main-content">
-                <h1 class="mb-4">Videojuegos</h1>
+                <h1 class="mb-4">Géneros</h1>
                 <div id="form-container">
-                    <button class="btn btn-primary" id="btnAdd">
-                        <a href="../main/addGame.php" class="text-light">Agregar videojuego</a>
+                    <button class="btn btn-primary">
+                        <a href="../main/addGenre.php" class="text-light">Agregar género</a>
                     </button>
                     <form class="form-inline" method="GET">
-                        <input class="form-control mr-sm-2" type="search" name="search" placeholder="Buscar videojuego">
+                        <input class="form-control mr-sm-2" type="search" name="search" placeholder="Buscar géneros">
                         <button class="btn btn-primary my-2 my-sm-0" type="submit">Buscar</button>
                     </form>
                 </div>
@@ -131,51 +121,34 @@ if (isset($_GET['search'])) {
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Descripción</th>
-                            <th>Fecha de Lanzamiento</th>
-                            <th>Género</th>
-                            <th>Desarrolladora</th>
+                            <th>Nombre de género</th>
                         </tr>
                     </thead>
-                    <tbody id="tabla-videojuegos">
+                    <tbody id="tabla">
                         <?php
                         include '../php/db.php';
-                        if (mysqli_num_rows($resultGamesPage) > 0) {
-                            while ($row = mysqli_fetch_assoc($resultGamesPage)) {
+                        if (mysqli_num_rows($resultUsersPage) > 0) {
+                            while ($row = mysqli_fetch_assoc($resultUsersPage)) {
                                 // Obtener los datos del videojuego
-                                $gameID = $row['gameID'];
-                                $name = $row['name'];
-                                $description = $row['description'];
-                                $releaseDate = $row['releaseDate'];
                                 $genreID = $row['genreID'];
-                                $developer = $row['developer'];
+                                $genreName = $row['genreName'];
+
 
                                 // Generar la fila de la tabla para el videojuego actual
                                 $tablaHTML = '';
                                 $tablaHTML .= '<tr>';
-                                $tablaHTML .= '<td>' . $gameID . '</td>';
-                                $tablaHTML .= '<td>' . $name . '</td>';
-                                // $tablaHTML .= '<td>' . $description . '</td>';
-                                $tablaHTML .= '<td>';
-                                $tablaHTML .= '<button class="btn btn-primary btn-descripcion" data-toggle="collapse" data-target="#descripcion-' . $gameID . '">
-                <i class="fas fa-plus"></i>
-                </button>';
-                                $tablaHTML .= '<div id="descripcion-' . $gameID . '" class="collapse">' . $description . '</div>';
-                                $tablaHTML .= '</td>';
-                                $tablaHTML .= '<td>' . $releaseDate . '</td>';
-                                $tablaHTML .= '<td>' . getGenreName($genreID) . '</td>';
-                                $tablaHTML .= '<td>' . $developer . '</td>';
+                                $tablaHTML .= '<td>' . $genreID . '</td>';
+                                $tablaHTML .= '<td>' . $genreName . '</td>';
                                 $tablaHTML .= '<td>' .
                                     '       
                 <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
                 <div class="btn-group mr-2" role="group" aria-label="Actualizar y Eliminar">
 
                     <button type="button" class="btn btn-primary">
-                    <a class="fas fa-sync-alt text-light" href="../main/updateGame.php?updateid=' . $gameID . '"></a>
+                    <a class="fas fa-sync-alt text-light" href="../main/updateGenre.php?updateid=' . $genreID . '"></a>
                 </button>
                     <button type="button" class="btn btn-danger">
-                    <a class="fas fa-trash-alt text-light" href="../main/deleteGame.php?deleteid=' . $gameID . '"></a>
+                    <a class="fas fa-trash-alt text-light" href="../main/deleteGenre.php?deleteid=' . $genreID . '"></a>
                 </button>
                 </div>
             </div>'
@@ -185,7 +158,7 @@ if (isset($_GET['search'])) {
                             }
                         } else {
                             echo '<td colspan="6" class="alert alert-info" role="alert">
-                                    <p class="text-center">No se encontró ningún videojuego.</p>                           
+                                    <p class="text-center">No se encontró ningún género...</p>                           
                                   </td>';
                         }
                         ?>

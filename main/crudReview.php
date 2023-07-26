@@ -107,6 +107,7 @@ function getGameName($gameID)
                 <a href="../main/games.php">Videojuegos</a>
                 <a href="../main/crudReview.php" class=" active">Reseñas</a>
                 <a href="../main/users.php">Usuarios</a>
+                <a href="../main/genres.php">Géneros</a>
                 <a href="../main/changepassword.php">Cambiar Contraseña</a>
                 <a href="../php/logout.php">Cerrar Sesión</a>
             </nav>

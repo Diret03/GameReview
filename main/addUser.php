@@ -46,7 +46,7 @@ if (isset($_POST['submit'])) {
 <body>
     <div class="container">
         <header class="header">
-            <h1 id="title" class="text-center">Actualizar usuario</h1>
+            <h1 id="title" class="text-center">Agregar usuario</h1>
         </header>
         <form method="POST" enctype="multipart/form-data" id="survey-form">
             <div class="form-group">

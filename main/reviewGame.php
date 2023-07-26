@@ -10,6 +10,16 @@ if (!isset($_SESSION['userID'])) {
     die();
 }
 
+// Función para obtener el nombre del genero a partir de su genderID
+function getGenreName($genreID)
+{
+    global $con;
+    $sql = "SELECT genreName FROM genres WHERE genreID =$genreID";
+    $result = mysqli_query($con, $sql);
+    $row = mysqli_fetch_assoc($result);
+    return $row['genreName'];
+}
+
 if (isset($_GET['reviewid'])) {
     $gameID = $_GET['reviewid'];
 
@@ -41,7 +51,7 @@ if (isset($_GET['reviewid'])) {
     $name = $row['name'];
     $description = $row['description'];
     $releaseDate = $row['releaseDate'];
-    $genre = $row['genre'];
+    $genreID = $row['genreID'];
     $developer = $row['developer'];
 }
 ?>
@@ -61,7 +71,7 @@ if (isset($_GET['reviewid'])) {
             </p>
         </header>
         <form id="survey-form" method="POST">
-            <p><b>Género: </b><?php echo $genre; ?></p>
+            <p><b>Género: </b><?php echo getGenreName($genreID); ?></p>
             <p><b>Desarrolladora: </b> <?php echo $developer; ?></p>
             <p><b>Fecha de Lanzamiento: </b> <?php echo $releaseDate; ?></p>
 

@@ -53,6 +53,16 @@ function getAverage($gameID)
     return $promedio;
 }
 
+// Función para obtener el nombre del genero a partir de su genderID
+function getGenreName($genreID)
+{
+    global $con;
+    $sql = "SELECT genreName FROM genres WHERE genreID =$genreID";
+    $result = mysqli_query($con, $sql);
+    $row = mysqli_fetch_assoc($result);
+    return $row['genreName'];
+}
+
 if (isset($_GET['search'])) {
     // Obtener el término de búsqueda ingresado por el usuario
     $searchTerm = mysqli_real_escape_string($con, $_GET['search']);
@@ -113,7 +123,7 @@ if (isset($_GET['search'])) {
                     // Aquí obtén los valores específicos del videojuego desde la fila actual en $row
                     $gameID = $row['gameID'];
                     $name = $row['name'];
-                    $genre = $row['genre'];
+                    $genreID = $row['genreID'];
                     $releaseDate = $row['releaseDate'];
                     $developer = $row['developer'];
 
@@ -136,7 +146,7 @@ if (isset($_GET['search'])) {
                         <img src="' . $imageURL . '" class="card-img-top" />
                         <div class="card-body">
                             <div class="d-flex justify-content-between">
-                                <p class="small"><a href="#!" class="text-muted">' . $genre . '</a></p>
+                                <p class="small"><a href="#!" class="text-muted">' . getGenreName($genreID) . '</a></p>
                                 <p class="small text-danger">' . $releaseDate . '</p>
                             </div>
                             <div class="d-flex justify-content-between mb-3">

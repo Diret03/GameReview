@@ -2,6 +2,17 @@
 
 include '../php/db.php';
 
+// Obtener los géneros de la tabla "genres"
+$sqlGenres = "SELECT * FROM genres";
+$resultGenres = mysqli_query($con, $sqlGenres);
+
+// Crear un arreglo para almacenar los géneros
+$genres = array();
+
+while ($rowGenre = mysqli_fetch_assoc($resultGenres)) {
+    $genres[$rowGenre['genreID']] = $rowGenre['genreName'];
+}
+
 if (isset($_POST['submit'])) {
     $name = $_POST['name'];
     $description = mysqli_real_escape_string($con, $_POST['description']); //se manejan caracteres especiales
@@ -21,7 +32,7 @@ if (isset($_POST['submit'])) {
     }
 
     // Preparamos la consulta SQL con el marcador de posición para el valor binario de la imagen
-    $sql = "INSERT INTO games (name, description, releaseDate, genre, developer, image) VALUES (?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO games (name, description, releaseDate, genreID, developer, image) VALUES (?, ?, ?, ?, ?, ?)";
 
     // Preparamos la sentencia y verificamos si se realizó correctamente
     $stmt = mysqli_prepare($con, $sql);
@@ -92,7 +103,12 @@ if (isset($_POST['submit'])) {
             </div>
             <div class="form-group">
                 <label for="genre">Género:</label>
-                <input type="text" class="form-control" id="genre" name="genre" required>
+                <select id="genre" name="genre" class="form-control" required>
+                    <option disabled selected value="">Seleccionar género</option>
+                    <?php foreach ($genres as $genreID => $genreName) { ?>
+                        <option value="<?php echo $genreID; ?>"><?php echo $genreName; ?></option>
+                    <?php } ?>
+                </select>
             </div>
             <div class="form-group">
                 <label for="developer">Desarrolladora:</label>
